@@ -154,7 +154,7 @@ int	main(int ac, char **av)
 {
 	pthread_t thread1, thread2;
 	t_collect_input philo;
-	pthread_
+	
 	
 	if (ac == 5 || ac == 6)
 	{
