@@ -1,6 +1,7 @@
 #include "philo.h"
 
-atomic_int				x = 0;
+long long	x = 0;
+pthread_mutex_t mutex;
 
 void	ft_putchar(char c)
 {
@@ -63,64 +64,28 @@ void	ft_putstre(char *str)
 	write(1, "\033[0m\n", 5);
 }
 
-// void    leaks(void)
-// {
-//     system("leaks philo");
-// }
-
-// void	*start2(void* arg)
-// {
-// 	printf("sec thread\n");
-// 	(void)arg;
-// 	printf("\nHI\n");
-// 	if (x >= 20)
-// 		x++;
-// 	sleep(1);
-// 	return (NULL);
-// }
-
-// void	*start3(void* arg)
-// {
-// 	printf("third thread\n");
-// 	(void)arg;
-// 	x++;
-// 	sleep(1);
-// 	return (NULL);
-
-// }
-
 void	*philo_task(void *arg)
 {
-	t_collect_input *philo;
-	philo = malloc(sizeof(t_collect_input));
-
-	 philo = (t_collect_input *)(arg);
-	printf("===a=c=c=e=s======\n");
-	printf("\n================\n");
-	for (long i = 0; i < 1; i++)
-	{
-		printf("first_mutex = %d \n", philo->mutex);
-		pthread_mutex_lock(&philo->mutex);
-		printf("after_lock_mutex = %d \n",philo->mutex);
-		x++;
-		pthread_mutex_unlock((pthread_mutex_t *)&philo->mutex);
-		printf("final_mutex = %d \n", philo->mutex);
-	}
-	printf("\n================\n");
+	t_philo philo = *(t_philo *) arg;
+	if (philo.id & 1)
+		usleep(600);
+	// philo.elements = malloc(sizeof(struct collect));
+	printf("philo . %d \n",(philo.elements->number_of_philo));
+	// pthread_mutex_lock(&it->mutex);
+	write(1, "Hello I'm Here now\n", 20);
+	// pthread_mutex_unlock(&(it->mutex));
 	return (NULL);
 }
 
-void	creat_threads(t_collect_input *philo, pthread_t thread)
+void	creat_threads(t_details_philo *philo, pthread_t thread, void *arg)
 {
 	unsigned int	i;
 	int				tx;
 
 	i = 0;
-	
-	
 	while (i < philo->number_of_philo)
 	{
-		tx = pthread_create(&thread, NULL, philo_task, &philo);
+		tx = pthread_create(&thread, NULL, philo_task, arg);
 		pthread_join(thread, NULL);
 		if (tx != 0)
 			ft_putstre("error while thread creation");
@@ -128,17 +93,18 @@ void	creat_threads(t_collect_input *philo, pthread_t thread)
 	}
 }
 
-void	full_struct(t_collect_input *philo, char **av)
+void	full_struct(t_details_philo *philo, char **av)
 {
 	philo->number_of_philo = ft_atoi(av[1]);
 	philo->repeat_turn = ft_atoi(av[5]);
 	philo->time_to_die = ft_atoi(av[2]);
 	philo->time_to_eat = ft_atoi(av[3]);
 	philo->time_to_sleep = ft_atoi(av[4]);
-	philo->mutex = 909;
+	philo->n_fork = ft_atoi(av[1]);
 }
 
-void	print_elem(t_collect_input philo)
+
+void	print_elem(t_details_philo philo)
 {
 	if (philo.number_of_philo)
 	{
@@ -150,27 +116,110 @@ void	print_elem(t_collect_input philo)
 	}
 }
 
-int	main(int ac, char **av)
+t_philo	*add_to_end(t_philo *philo, int id)
 {
-	pthread_t thread1, thread2;
-	t_collect_input philo;
-	pthread_
-	
+	t_philo	*ptr;
+	t_philo	*x;
+
+	ptr = philo;
+	x = (t_philo *)malloc(sizeof(t_philo));
+	x->id = id;
+	x->next = NULL;
+	while (ptr->next)
+	{
+		ptr = ptr->next;
+	}
+	ptr->next = x;
+	return (x);
+}
+
+void freeall(t_philo **philo)
+{
+	int Philos = (*philo)->elements->number_of_philo;
+	printf("\nZEEB\n");
+	printf("here : %u \n", (*philo)->elements->number_of_philo);
+	t_philo *catcher; 
+	catcher = (*philo);
+	for(int i = 0; i < Philos; i++)
+	{
+			free((catcher));
+			(catcher )= (catcher)->next;		
+	}
+}
+
+
+void	build_infra_structur(t_philo **philo, t_details_philo details)
+{
+	t_philo *catcher;
+	*(philo) = (t_philo *)malloc(sizeof(philo));
+	(*philo)->id = 1;
+	(*philo)->elements = malloc(sizeof(struct collect));
+	(*philo)->elements = &details;
+	(*philo)->next = NULL;
+	(*philo)->philos = malloc(sizeof(pthread_t) * details.number_of_philo);
+	details.index = 1;
+	catcher = *(philo);
+	while (details.index <= details.number_of_philo)
+	{
+		pthread_create(&((*philo)->philos[details.index]), NULL, philo_task, (*philo));
+		catcher = add_to_end(*(philo), details.index + 1);
+		details.index++;
+	}
+	details.index = 1;
+	while (details.index <= details.number_of_philo)
+	{
+		pthread_join((*philo)->philos[details.index], NULL);
+		details.index++;
+	}
+	catcher->next = (*philo);
+	freeall(&catcher);
+}
+
+void	init_mutexes(pthread_mutex_t  *arr, t_details_philo details)
+{
+	details.index = 1;
+	while (details.index <= details.number_of_philo)
+	{
+		pthread_mutex_init(&arr[details.index], NULL);
+		details.index++;
+	}
+}
+
+int	_main(int ac, char **av)
+{
+	t_philo *philo;
+	t_details_philo details;
+	// t_mutex mutex;
+	philo = NULL;
 	if (ac == 5 || ac == 6)
 	{
-		full_struct(&philo, av);
-		printf("%d \n", philo.mutex);
-		// pthread_mutex_init(&(philo.mutex), NULL);
-		if (!analyse_data(av))
-		{
-			write(1, "by\n", 3);
+		if (!(analyse_data(av)))
 			return (0);
-		}
-		creat_threads(&philo, thread1);
-		// pthread_mutex_destroy((pthread_mutex_t *)&philo.mutex);
-		printf("\n *|x|* = %d \n", x);
+		full_struct(&details, av);
+		details.fork = malloc(sizeof (unsigned int ) * details.number_of_philo);
+		init_mutexes(details.fork, details);
+		build_infra_structur(&philo, details);
+		free(philo->philos);
+		free(details.fork);
+		free(philo);
+
+		// print_elem(details);
+		// philo = malloc(sizeof(t_philo) * details.number_of_philo);
+		// details.fork = malloc(sizeof(t_details_philo) * details.n_fork);
+		// details.index = 1;
+		// while (details.index <= details.number_of_philo)
+		// {
+		// 	pthread_create((pthread_t *)&philo[details.index],NULL, philo_task, (void *)&mutex);
+		// 	details.index++;
+		// }	
 	}
 	else
-		ft_putstre("remember : Enter enough argument");
+		ft_putstre("Remember : enter anough arguments");
 	return (0);
+}
+
+int main(int ac, char **av)
+{
+	_main(ac, av);
+	system("leaks philo");
 }
