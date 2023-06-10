@@ -47,12 +47,12 @@ long long	get_time(void)
 	return (time_en_milli);
 }
 
-void	notification(char c, int id, long last_eat)
+void	notification(char c, int id, long time_begin)
 {
 	long	time;
 
 	time = get_time();
-	time -= last_eat;
+	time -= time_begin;
 	if (c == 'F')
 		printf("%lu  %d   has taken a fork\n", time, id);
 	if (c == 'e')
@@ -73,20 +73,19 @@ void	*philo_task(void *arg)
 		usleep(600);
 	while (1)
 	{
-		printf("%d \n", philo.elements->number_of_philo);
-		pthread_mutex_lock(&mutex[philo.left_fork]);
-		notification('F', philo.id, philo.last_eat);
-		pthread_mutex_lock(&mutex[philo.right_fork]);
-		notification('F', philo.id, philo.last_eat);
+		pthread_mutex_lock(&philo.elements->fork[philo.left_fork]);
+		notification('F', philo.id, philo.elements->time_begin);
+		pthread_mutex_lock(&philo.elements->fork[philo.right_fork]);
+		notification('F', philo.id, philo.elements->time_begin);
 		philo.last_eat = get_time();
-		notification('e', philo.id, philo.last_eat);
+		notification('e', philo.id, philo.elements->time_begin);
 		philo.many_eat++;
 		usleep(philo.elements->time_to_eat);
-		pthread_mutex_unlock(&mutex[(philo.left_fork)]);
-		pthread_mutex_unlock(&mutex[philo.right_fork]);
-		notification('s', philo.id, philo.last_eat);
+		pthread_mutex_unlock(&philo.elements->fork[(philo.left_fork)]);
+		pthread_mutex_unlock(&philo.elements->fork[philo.right_fork]);
+		notification('s', philo.id,philo.elements->time_begin);
 		usleep(philo.elements->time_to_sleep);
-		notification('t', philo.id, philo.last_eat);
+		notification('t', philo.id, philo.elements->time_begin);
 	}
 	return (NULL);
 }
@@ -229,7 +228,7 @@ void	generate_thread(t_philo **philo, t_details_philo details)
 
 	catcher = (*philo);
 	details.index = 0;
-	details.time_begin = (long long) get_time;
+	catcher->elements->time_begin =  get_time();
 	while (details.index < details.number_of_philo)
 	{
 		if (pthread_create(&(catcher)->philos_th, NULL, philo_task, catcher))
@@ -245,7 +244,6 @@ void	generate_thread(t_philo **philo, t_details_philo details)
 	while (details.index < details.number_of_philo)
 	{
 		pthread_join(catcher->philos_th, NULL);
-		printf("%p \n", catcher->elements);
 		details.index++;
 		catcher = catcher->next;
 
@@ -269,12 +267,12 @@ int	main(int ac, char **av)
 		details->fork = malloc(sizeof(unsigned int) * details->number_of_philo);
 		while (details->index < details->number_of_philo)
 		{
-			pthread_mutex_init(&mutex[details->index], NULL);
+			pthread_mutex_init(&details->fork[details->index], NULL);
 			details->index++;
 		}
 		build_infra_structure(&philo, details);
 		// print_elems(philo);
-		// pthread_mutex_
+		// pthread_mutex_destroy()
 		generate_thread(&philo, *details);
 		// free(philo);
 		free(details->fork);
