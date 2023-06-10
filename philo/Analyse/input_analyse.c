@@ -6,11 +6,51 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 15:41:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/05/29 14:54:03 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:27:29 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../philo.h"
+
+void	ft_putstre(char *str)
+{
+	int	i;
+
+	i = -1;
+	write(1, "\033[1;32m", 7);
+	while (str[++i])
+	{
+		write(1, &str[i], 1);
+	}
+	write(1, "\033[0m\n", 5);
+}
+
+long	ft_atoi(char *str)
+{
+	long	signe;
+	long	result;
+	int		i;
+
+	i = 0;
+	if (str == NULL)
+		return (0);
+	signe = 1;
+	result = 0;
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			signe *= -1;
+		i++;
+	}
+	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
+	{
+		result = result * 10 + str[i] - 48;
+		i++;
+	}
+	return (result * signe);
+}
 
 int	input_state(char *str)
 {

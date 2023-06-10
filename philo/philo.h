@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:01:27 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/10 10:16:31 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/10 15:29:05 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 typedef struct philo
 {
 	pthread_t		philos_th;
-	int				id;
+	unsigned int	id;
 	unsigned int    last_eat;
 	struct philo 	*next;
 	struct collect  *elements;
