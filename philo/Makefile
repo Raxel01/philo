@@ -6,7 +6,7 @@
 #    By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/22 15:54:56 by abait-ta          #+#    #+#              #
-#    Updated: 2023/06/06 16:09:35 by abait-ta         ###   ########.fr        #
+#    Updated: 2023/06/09 17:17:33 by abait-ta         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ HEADER = philo.h
 all : $(NAME)
 
 $(NAME): $(HEADER) $(OBJ)
-	@$(CC)  -o $@ $(OBJ) && $(RM) $(OBJ)
+	@$(CC) -o $@ $(OBJ) && $(RM) $(OBJ)
 
 %.o : %.c $(HEADER)
 	@$(CC) $(CFLAGS) -c $< -o $@		
