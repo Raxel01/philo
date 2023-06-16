@@ -6,11 +6,11 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 15:41:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/10 15:27:29 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/16 11:04:58 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../philo.h"
+#include "../header/philo.h"
 
 void	ft_putstre(char *str)
 {
@@ -82,9 +82,10 @@ int	check_parametres_limits(char **av)
 			return (0);
 		}
 		else if (ft_atoi(av[2]) < 60 || ft_atoi(av[3]) < 60
-				|| ft_atoi(av[4]) < 60)
+			|| ft_atoi(av[4]) < 60)
 		{
-			ft_putstre("ATTENTION ! : don't test with under of 60 ms in this parametres.");
+			ft_putstre("ATTENTION !:don't test with under of 60 \
+				ms in this parametres.");
 			return (0);
 		}
 		i++;
@@ -92,17 +93,18 @@ int	check_parametres_limits(char **av)
 	return (1);
 }
 
+/*principale parsing fonction*/
 int	analyse_data(char **av)
 {
-	int i;
+	int	i;
 
 	i = 1;
 	while (av[i])
 	{
 		if (input_state(av[i]))
 		{
-            if (!(check_parametres_limits(av)))
-                return (0);
+			if (!(check_parametres_limits(av)))
+				return (0);
 			if (ft_atoi(av[i]) < 0 || ft_atoi(av[i]) > 65535)
 				return (0);
 		}
