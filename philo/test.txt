@@ -1,0 +1,25 @@
+0  2   has taken a fork
+0  2   has taken a fork
+0  2    start    eating
+0  4   has taken a fork
+0  4   has taken a fork
+0  4    start    eating
+1  3   has taken a fork
+1  3   has taken a fork
+1  3    start    eating
+202  1927866   start   sleeping
+202  3   start   sleeping
+202  4   start   sleeping
+404  0   start   thinking
+404  0   has taken a fork
+404  0   has taken a fork
+404  0    start    eating
+404  3   start   thinking
+404  3   has taken a fork
+404  3   has taken a fork
+404  3    start    eating
+404  4   start   thinking
+404  4   has taken a fork
+404  4   has taken a fork
+404  4    start    eating
+[0;33m 412 1927865 DIED[0m

@@ -6,10 +6,9 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:13:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/16 11:15:36 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/18 14:01:15 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "../header/philo.h"
 
@@ -55,10 +54,10 @@ void	add_to_end(t_philo **philo, t_philo *newFilo)
 	}
 }
 
-t_philo	*new_philo(int id, t_details_philo *details)
+t_philo	*new_philo(unsigned int id, t_details_philo *details)
 {
 	t_philo	*philo;
-
+	
 	philo = malloc(sizeof(t_philo));
 	philo->id = id;
 	philo->left_fork = id;
@@ -73,8 +72,8 @@ t_philo	*new_philo(int id, t_details_philo *details)
 
 void	build_infra_structure(t_philo **philo, t_details_philo *details)
 {
-	details->index = 1;
 	(*philo) = NULL;
+	details->index = 1;
 	while (details->index <= details->number_of_philo)
 	{
 		add_to_end(philo, new_philo(details->index, details));

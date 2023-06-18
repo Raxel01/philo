@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:01:27 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/16 11:34:24 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/17 11:16:03 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,12 @@ typedef struct collect
 long				ft_atoi(char *str);
 void				ft_putstre(char *str);
 int					analyse_data(char **av);
-void 				thanthos_death(t_philo **philo);
+int					thanathos_death(t_philo **philo);
 void				mutex_initializer(t_details_philo *details);
 void				full_struct(t_details_philo *philo, char **av);
 void				ft_lstclear(t_philo **lst, t_details_philo details);
 void				generate_thread(t_philo **philo, t_details_philo details);
-void				build_infra_structure(t_philo **philo, t_details_philo *details);
+void				build_infra_structure(t_philo **philo,
+							t_details_philo *details);
 
 #endif

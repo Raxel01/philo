@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   thread_creation_manipulation.c                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/06/18 13:58:37 by abait-ta          #+#    #+#             */
+/*   Updated: 2023/06/18 18:23:48 by abait-ta         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../header/philo.h"
 
 long long	get_time(void)
@@ -11,78 +23,115 @@ long long	get_time(void)
 	return (time_en_milli);
 }
 
-void 	thanthos_death(t_philo **philo)	
+int	check_turn(t_philo *node)
 {
-	(void)philo;
-printf("hi\n");
+	t_philo			*check;
+	unsigned int	verifier;
+
+	verifier = 1;
+	check = node;
+	check->elements->index = 0;
+	while (check->elements->index < check->elements->number_of_philo)
+	{
+		if (check->many_eat >= node->elements->repeat_turn)
+		{
+			verifier++;
+			if (verifier == node->elements->number_of_philo)
+				return (0);
+		}
+		check->elements->index++;
+		check = check->next;
+	}
+	return (1);
 }
 
-void	notification(char c, int id, long time_begin)
+int	thanathos_death(t_philo **philo)
+{
+	t_philo			*node;
+
+	node = (*philo);
+	node->elements->index = 0;
+	while (1)
+	{
+		if (get_time() - node->last_eat >= node->elements->time_to_die)
+		{
+			printf("\033[0;33m %lld %d DIED\033[0m\n",
+					get_time() - node->elements->time_begin,
+					node->id);
+			return (0);
+		}
+		if (node->elements->repeat_turn > 0)
+		{
+			if (!(check_turn(*philo)))
+			{
+				printf("\033[0;33m PHILOSOPHER EAT ENOUGH TURNS \033[0m\n");
+				return (0);
+			}
+		}
+		node = node->next;
+	}
+	return (1);
+}
+
+void	notification(char c, unsigned int id, long time_begin)
 {
 	long	time;
 
 	time = get_time();
 	time -= time_begin;
 	if (c == 'F')
-		printf("%lu  %d   has taken a fork\n", time, id);
+		printf("%ld  %u   has taken a fork\n", time, id);
 	if (c == 'e')
-		printf("%lu  %d    start    eating\n", time, id);
+		printf("%ld  %u    start    eating\n", time, id);
 	if (c == 's')
-		printf("%lu  %d   start   sleeping\n", time, id);
+		printf("%ld  %u   start   sleeping\n", time, id);
 	if (c == 't')
-		printf("%lu  %d   start   thinking\n", time, id);
+		printf("%ld  %u   start   thinking\n", time, id);
 }
 
 void	*philo_task(void *arg)
 {
-	t_philo	philo;
+	t_philo	*philo;
 
-	philo = *(t_philo *)arg;
-	if (philo.id & 1)
-		usleep(600);
+	philo = (t_philo *)arg;
+	if (philo->id & 1)
+		usleep(800);
 	while (1)
 	{
-		pthread_mutex_lock(&philo.elements->fork[philo.left_fork]);
-		notification('F', philo.id, philo.elements->time_begin);
-		pthread_mutex_lock(&philo.elements->fork[philo.right_fork]);
-		notification('F', philo.id, philo.elements->time_begin);
-		notification('e', philo.id, philo.elements->time_begin);
-		philo.last_eat = get_time() - philo.elements->time_begin;
-		// printf(" \033[33m %d \033[1;32m%lld \033[0m\n", philo.id, philo.last_eat);
-		usleep(philo.elements->time_to_eat * 1000);
-		philo.many_eat++;
-		pthread_mutex_unlock(&philo.elements->fork[(philo.left_fork)]);
-		pthread_mutex_unlock(&philo.elements->fork[philo.right_fork]);
-		notification('s', philo.id, philo.elements->time_begin);
-		usleep(philo.elements->time_to_sleep * 1000);
-		notification('t', philo.id, philo.elements->time_begin);
+		pthread_mutex_lock(&philo->elements->fork[philo->left_fork]);
+		notification('F', philo->id, philo->elements->time_begin);
+		pthread_mutex_lock(&philo->elements->fork[philo->right_fork]);
+		notification('F', philo->id, philo->elements->time_begin);
+		notification('e', philo->id, philo->elements->time_begin);
+		philo->last_eat = get_time();
+		usleep(philo->elements->time_to_eat * 1000);
+		philo->many_eat++;
+		pthread_mutex_unlock(&philo->elements->fork[(philo->left_fork)]);
+		pthread_mutex_unlock(&philo->elements->fork[philo->right_fork]);
+		notification('s', philo->id, philo->elements->time_begin);
+		usleep(philo->elements->time_to_sleep * 1000);
+		notification('t', philo->id, philo->elements->time_begin);
 	}
 	return (NULL);
 }
 
 void	generate_thread(t_philo **philo, t_details_philo details)
 {
-	t_philo	*catcher;
+	t_philo *catcher;
+	int		i;
 
+	i = 0;
 	catcher = (*philo);
-	details.index = 0;
 	catcher->elements->time_begin = get_time();
-	while (details.index < details.number_of_philo)
+	while ((unsigned int)i < details.number_of_philo)
 	{
+		catcher->last_eat = get_time();
 		if (pthread_create(&(catcher)->philos_th, NULL, philo_task, catcher))
 		{
 			ft_putstre("Error while creating a thread");
-			return;
+			return ;
 		}
-		details.index++;
-		catcher = catcher->next;
-	}
-	catcher = (*philo);
-	details.index = 0;
-	while (details.index < details.number_of_philo)
-	{
-		pthread_detach(catcher->philos_th);
-		details.index++;
+		i++;
 		catcher = catcher->next;
 	}
 }
