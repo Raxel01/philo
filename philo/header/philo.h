@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:01:27 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/20 17:02:00 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 18:20:31 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,12 +56,14 @@ long				ft_atoi(char *str);
 void				ft_putstre(char *str);
 int					analyse_data(char **av);
 void				delayer(long long time);
+void				eat_routine(t_philo *philo);
 int					thanathos_death(t_philo **philo);
 void				mutex_initializer(t_details_philo *details);
 void				full_struct(t_details_philo *philo, char **av);
 void				notification(char c, t_philo *philo, long time_begin);
 void				ft_lstclear(t_philo **lst, t_details_philo details);
 void				generate_thread(t_philo **philo, t_details_philo details);
+void				suite_notification(char c, t_philo *philo, long time_begin);
 void				build_infra_structure(t_philo **philo, \
 			t_details_philo *details);
 #endif

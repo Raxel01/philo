@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:11:57 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/20 17:00:57 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 18:22:39 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ int	main(int ac, char **av)
 			return (0);
 	}
 	else
-		ft_putstre("Remember : enter anough arguments");
+		ft_putstre("Remember : enter enough arguments");
 	return (0);
 }
