@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:08:23 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/19 17:09:16 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:05:12 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,7 @@ void	delayer(long long time)
 
 	start = get_time();
 	while (get_time() - start < time)
-	{
 		usleep(100);
-	}
 }
 
 void	ft_lstclear(t_philo **lst, t_details_philo details)

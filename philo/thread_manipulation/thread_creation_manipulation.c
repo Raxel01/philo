@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 13:58:37 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/19 17:11:55 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:06:45 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,17 @@ int	check_turn(t_philo *node)
 {
 	t_philo			*check;
 	unsigned int	verifier;
+	unsigned int many_eat;
 
 	verifier = 1;
 	check = node;
 	check->elements->index = 0;
 	while (check->elements->index < check->elements->number_of_philo)
 	{
-		if (check->many_eat >= node->elements->repeat_turn)
+		pthread_mutex_lock(&node->elements->m_many_eat);
+		many_eat = check->many_eat;
+		pthread_mutex_unlock(&node->elements->m_many_eat);
+		if (many_eat >= node->elements->repeat_turn)
 		{
 			verifier++;
 			if (verifier == node->elements->number_of_philo)
@@ -37,22 +41,25 @@ int	check_turn(t_philo *node)
 int	thanathos_death(t_philo **philo)
 {
 	t_philo	*node;
+	long long	m_last;
 
 	node = (*philo);
 	node->elements->index = 0;
 	while (1)
 	{
-		if (get_time() - node->last_eat >= node->elements->time_to_die)
+		pthread_mutex_lock(&(*philo)->elements->m_last_eat);
+		m_last = get_time() - node->last_eat;
+		pthread_mutex_unlock(&(*philo)->elements->m_last_eat);
+		if (m_last >= node->elements->time_to_die)
 		{
-			printf("\033[0;33m %lld %d DIED\033[0m\n",
-				get_time() - node->elements->time_begin, node->id);
+			notification('d', node, node->elements->time_begin);
 			return (0);
 		}
 		if (node->elements->repeat_turn > 0)
 		{
 			if (!(check_turn(*philo)))
 			{
-				printf("\033[0;33m PHILOSOPHER EAT ENOUGH TURNS \033[0m\n");
+				notification('G', node, 0);	
 				return (0);
 			}
 		}
@@ -61,20 +68,35 @@ int	thanathos_death(t_philo **philo)
 	return (1);
 }
 
-void	notification(char c, unsigned int id, long time_begin)
+void	notification(char c, t_philo *philo, long time_begin)
 {
 	long	time;
 
 	time = get_time();
 	time -= time_begin;
-	if (c == 'F')
-		printf("%ld  %u   has taken a fork\n", time, id);
-	if (c == 'e')
-		printf("%ld  %u    start    eating\n", time, id);
-	if (c == 's')
-		printf("%ld  %u   start   sleeping\n", time, id);
-	if (c == 't')
-		printf("%ld  %u   start   thinking\n", time, id);
+	pthread_mutex_lock(&philo->elements->m_die);
+	if (c == 'd')
+	{
+		printf("\033[0;33m %ld %d DIED\033[0m\n",time, philo->id);
+	}
+	else
+	{
+		if (c != 'G')
+			pthread_mutex_unlock(&philo->elements->m_die);
+		if (c == 'G')
+		{
+			usleep(500);
+			printf("\033[0;33m PHILOSOPHER EAT ENOUGH TURNS \033[0m\n");
+		}
+		if (c == 'F')
+			printf("%ld  %u   has taken a fork\n", time, philo->id);
+		if (c == 'e')
+			printf("%ld  %u    start    eating\n", time, philo->id);
+		if (c == 's')
+			printf("%ld  %u   start   sleeping\n", time, philo->id);
+		if (c == 't')
+			printf("%ld  %u   start   thinking\n", time, philo->id);
+	}
 }
 
 void	*philo_task(void *arg)
@@ -87,18 +109,22 @@ void	*philo_task(void *arg)
 	while (1)
 	{
 		pthread_mutex_lock(&philo->elements->fork[philo->left_fork]);
-		notification('F', philo->id, philo->elements->time_begin);
+		notification('F', philo, philo->elements->time_begin);
 		pthread_mutex_lock(&philo->elements->fork[philo->right_fork]);
-		notification('F', philo->id, philo->elements->time_begin);
-		notification('e', philo->id, philo->elements->time_begin);
+		notification('F', philo, philo->elements->time_begin);
+		notification('e', philo, philo->elements->time_begin);
+		pthread_mutex_lock(&philo->elements->m_last_eat);
 		philo->last_eat = get_time();
+		pthread_mutex_unlock(&philo->elements->m_last_eat);
 		delayer(philo->elements->time_to_eat);
+		pthread_mutex_lock(&philo->elements->m_many_eat);
 		philo->many_eat++;
-		pthread_mutex_unlock(&philo->elements->fork[(philo->left_fork)]);
+		pthread_mutex_unlock(&philo->elements->m_many_eat);
 		pthread_mutex_unlock(&philo->elements->fork[philo->right_fork]);
-		notification('s', philo->id, philo->elements->time_begin);
+		pthread_mutex_unlock(&philo->elements->fork[(philo->left_fork)]);
+		notification('s', philo, philo->elements->time_begin);
 		delayer(philo->elements->time_to_sleep);
-		notification('t', philo->id, philo->elements->time_begin);
+		notification('t', philo, philo->elements->time_begin);
 	}
 	return (NULL);
 }

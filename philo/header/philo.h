@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/22 16:01:27 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/19 17:34:41 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 17:02:00 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,19 +43,25 @@ typedef struct collect
 	unsigned int	repeat_turn;
 	unsigned int	n_fork;
 	long long		time_begin;
+	pthread_mutex_t	m_many_eat;
+	pthread_mutex_t	m_last_eat;
+	pthread_mutex_t	m_die;
+	pthread_mutex_t	m_turn;
 	pthread_mutex_t	*fork;
 }					t_details_philo;
 
-long long	get_time(void);
-long		ft_atoi(char *str);
-void		ft_putstre(char *str);
-int			analyse_data(char **av);
-void		delayer(long long time);
-int			thanathos_death(t_philo **philo);
-void		mutex_initializer(t_details_philo *details);
-void		full_struct(t_details_philo *philo, char **av);
-void		ft_lstclear(t_philo **lst, t_details_philo details);
-void		generate_thread(t_philo **philo, t_details_philo details);
-void		build_infra_structure(t_philo **philo, \
-		t_details_philo *details);
+void				leaks(void);
+long long			get_time(void);
+long				ft_atoi(char *str);
+void				ft_putstre(char *str);
+int					analyse_data(char **av);
+void				delayer(long long time);
+int					thanathos_death(t_philo **philo);
+void				mutex_initializer(t_details_philo *details);
+void				full_struct(t_details_philo *philo, char **av);
+void				notification(char c, t_philo *philo, long time_begin);
+void				ft_lstclear(t_philo **lst, t_details_philo details);
+void				generate_thread(t_philo **philo, t_details_philo details);
+void				build_infra_structure(t_philo **philo, \
+			t_details_philo *details);
 #endif

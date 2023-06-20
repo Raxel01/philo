@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:13:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/19 17:12:53 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 14:15:35 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,10 @@ void	mutex_initializer(t_details_philo *details)
 		pthread_mutex_init(&details->fork[details->index], NULL);
 		details->index++;
 	}
+	pthread_mutex_init(&details->m_die, NULL);
+	pthread_mutex_init(&details->m_last_eat, NULL);
+	pthread_mutex_init(&details->m_many_eat, NULL);
+	pthread_mutex_init(&details->m_turn, NULL);
 }
 
 void	add_to_end(t_philo **philo, t_philo *newFilo)
