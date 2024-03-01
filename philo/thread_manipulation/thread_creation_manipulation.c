@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/18 13:58:37 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/20 18:31:49 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/21 15:02:33 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ void	notification(char c, t_philo *philo, long time_begin)
 		if (c == 'd')
 			printf("\033[0;33m %ld %d DIED\033[0m\n", time, philo->id);
 		else
-			printf("\033[0;33m PHILOSOPHER EAT ENOUGH TURNS \033[0m\n");
+			printf("\033[0;33m PHILOSOPHER EAT %u TIMES \033[0m\n",
+				philo->elements->repeat_turn);
 	}
 	else
 	{
@@ -42,9 +43,9 @@ void	notification(char c, t_philo *philo, long time_begin)
 
 void	eat_routine(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->elements->fork[philo->left_fork]);
-	notification('F', philo, philo->elements->time_begin);
 	pthread_mutex_lock(&philo->elements->fork[philo->right_fork]);
+	notification('F', philo, philo->elements->time_begin);
+	pthread_mutex_lock(&philo->elements->fork[philo->left_fork]);
 	notification('F', philo, philo->elements->time_begin);
 	notification('e', philo, philo->elements->time_begin);
 	pthread_mutex_lock(&philo->elements->m_last_eat);
@@ -54,8 +55,8 @@ void	eat_routine(t_philo *philo)
 	pthread_mutex_lock(&philo->elements->m_many_eat);
 	philo->many_eat++;
 	pthread_mutex_unlock(&philo->elements->m_many_eat);
-	pthread_mutex_unlock(&philo->elements->fork[philo->right_fork]);
 	pthread_mutex_unlock(&philo->elements->fork[(philo->left_fork)]);
+	pthread_mutex_unlock(&philo->elements->fork[philo->right_fork]);
 }
 
 void	*philo_task(void *arg)

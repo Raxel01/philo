@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/16 11:13:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/20 14:15:35 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/25 13:11:21 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	full_struct(t_details_philo *philo, char **av)
 {
 	philo->number_of_philo = ft_atoi(av[1]);
+	philo->n_fork = ft_atoi(av[1]);
 	philo->repeat_turn = ft_atoi(av[5]);
 	philo->time_to_die = ft_atoi(av[2]);
 	philo->time_to_eat = ft_atoi(av[3]);
@@ -63,7 +64,9 @@ t_philo	*new_philo(unsigned int id, t_details_philo *details)
 	t_philo	*philo;
 
 	philo = malloc(sizeof(t_philo));
-	philo->id = id;
+	if (!philo)
+		return (NULL);
+	philo->id = id + 1;
 	philo->left_fork = id;
 	philo->right_fork = (id + 1) % (details->number_of_philo);
 	philo->elements = details;
@@ -74,11 +77,12 @@ t_philo	*new_philo(unsigned int id, t_details_philo *details)
 	return (philo);
 }
 
+//##################CHANGE#############################################
 void	build_infra_structure(t_philo **philo, t_details_philo *details)
 {
 	(*philo) = NULL;
-	details->index = 1;
-	while (details->index <= details->number_of_philo)
+	details->index = 0;
+	while (details->index < details->number_of_philo)
 	{
 		add_to_end(philo, new_philo(details->index, details));
 		details->index++;

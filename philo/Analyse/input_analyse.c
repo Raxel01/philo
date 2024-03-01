@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/25 15:41:55 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/16 11:04:58 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/20 22:00:44 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,16 +76,16 @@ int	check_parametres_limits(char **av)
 	i = 1;
 	while (av[i])
 	{
-		if (ft_atoi(av[1]) > 200)
+		if (ft_atoi(av[1]) <= 0 || ft_atoi(av[1]) > 200)
 		{
-			ft_putstre("You have enter more than 200 philo");
+			ft_putstre("RECHECK number of philo please");
 			return (0);
 		}
 		else if (ft_atoi(av[2]) < 60 || ft_atoi(av[3]) < 60
 			|| ft_atoi(av[4]) < 60)
 		{
-			ft_putstre("ATTENTION !:don't test with under of 60 \
-				ms in this parametres.");
+			ft_putstre("ATTENTION !:don't test with under of 60 ms in this parametres \
+				.");
 			return (0);
 		}
 		i++;

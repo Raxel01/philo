@@ -6,7 +6,7 @@
 /*   By: abait-ta <abait-ta@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/19 16:08:23 by abait-ta          #+#    #+#             */
-/*   Updated: 2023/06/20 18:33:40 by abait-ta         ###   ########.fr       */
+/*   Updated: 2023/06/25 13:17:21 by abait-ta         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,4 @@ void	delayer(long long time)
 	start = get_time();
 	while (get_time() - start < time)
 		usleep(100);
-}
-
-void	leaks(void)
-{
-	system("leaks philo");
 }
